@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IRONWAY</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111111;
+      --muted:#666666;
+      --line:#e9e9e9;
+      --card:#fafafa;
+      --btn:#111111;
+      --btnText:#ffffff;
+      --btn2:#f2f2f2;
+      --shadow: 0 8px 24px rgba(0,0,0,.06);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1150px;margin:0 auto;padding:22px}
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:18px 22px;
+      max-width:1150px;margin:0 auto;
+    }
+    .brand{
+      font-size:20px;
+      font-weight:900;
+      letter-spacing: .22em;
+    }
+    .right{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+    }
+    .search{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;border:1px solid var(--line);border-radius:999px;
+      background:#fff;
+      min-width: 240px;
+    }
+    .search input{
+      border:0;outline:0;background:transparent;width:100%;
+      font-size:14px;color:var(--text);
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:var(--btn2);
+      padding:10px 12px;border-radius:999px;
+      cursor:pointer;
+      font-weight:650;
+      transition: transform .06s ease;
+      user-select:none;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background:var(--btn);
+      color:var(--btnText);
+      border-color:var(--btn);
+    }
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:28px;height:22px;padding:0 8px;
+      border-radius:999px;
+      background:#111;color:#fff;
+      font-size:12px;font-weight:750;
+    }
+
+    nav{
+      max-width:1150px;margin:0 auto;
+      padding:0 22px 14px 22px;
+      display:flex;gap:10px;flex-wrap:wrap;
+    }
+    .tab{
+      border:1px solid var(--line);
+      padding:9px 12px;border-radius:999px;
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;font-weight:700;
+      color:var(--muted);
+    }
+    .tab.active{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    .gridHead{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+      padding:18px 0 10px 0;
+    }
+    .hint{color:var(--muted);font-size:13px;line-height:1.4}
+    .products{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:14px;
+      padding:10px 0 28px 0;
+    }
+    @media (max-width: 980px){ .products{grid-template-columns: repeat(3, 1fr)} .search{min-width:200px} }
+    @media (max-width: 720px){ .products{grid-template-columns: repeat(2, 1fr)} }
+    @media (max-width: 420px){
+      .products{grid-template-columns: 1fr}
+      .search{min-width:unset; width:100%}
+      .right{width:100%}
+      .top{flex-direction:column;align-items:flex-start}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background:#fff;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      display:flex;flex-direction:column;
+      min-height: 340px;
+    }
+
+    .thumb{
+      position:relative;
+      background: var(--card);
+      overflow:hidden;
+    }
+    .rail{
+      display:flex;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .rail::-webkit-scrollbar{display:none}
+    .slide{
+      flex:0 0 100%;
+      aspect-ratio: 1/1;
+      scroll-snap-align: start;
+      position:relative;
+      cursor: zoom-in;
+    }
+    .slide img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .tag{
+      position:absolute;left:10px;top:10px;
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      padding:6px 10px;border-radius:999px;
+      font-size:12px;font-weight:800;
+      color:#111;
+      z-index:2;
+    }
+    .navArrows{
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 8px;
+      pointer-events:none;
+      z-index:2;
+    }
+    .arr{
+      pointer-events:auto;
+      width:34px;height:34px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+      user-select:none;
+    }
+    .dots{
+      position:absolute;left:0;right:0;bottom:10px;
+      display:flex;justify-content:center;gap:6px;
+      z-index:2;
+      pointer-events:none;
+    }
+    .dot{
+      width:7px;height:7px;border-radius:999px;
+      border:1px solid rgba(0,0,0,.25);
+      background:rgba(255,255,255,.75);
+      pointer-events:none;
+    }
+    .dot.active{background:#111;border-color:#111}
+
+    .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .name{
+      font-weight:800;
+      font-size:14px;
+      line-height:1.25;
+      min-height: 36px;
+    }
+    .meta{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      font-size:12px;
+      color:var(--muted);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.active{border-color:#111;color:#111}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto}
+    .price{font-weight:900}
+    .small{font-size:12px;color:var(--muted)}
+    .add{
+      border:1px solid #111;
+      background:#111;color:#fff;
+      padding:9px 12px;border-radius:12px;
+      cursor:pointer;font-weight:800;
+    }
+
+    .overlay{
+      position:fixed;inset:0;display:none;z-index:80;
+      background:rgba(0,0,0,.35);
+    }
+    .overlay.open{display:block}
+    .drawer{
+      position:absolute;right:0;top:0;height:100%;
+      width:420px;max-width:92vw;
+      background:#fff;
+      border-left:1px solid var(--line);
+      box-shadow: 0 20px 80px rgba(0,0,0,.18);
+      display:flex;flex-direction:column;
+    }
+    .dhd{
+      padding:16px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .dbd{padding:14px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:12px}
+    .dft{padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+    .item{
+      display:grid;grid-template-columns: 70px 1fr;gap:12px;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding:10px;
+      background:#fff;
+    }
+    .item img{width:70px;height:70px;border-radius:12px;object-fit:cover;background:var(--card)}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qbtn{
+      width:30px;height:30px;border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;font-weight:900;
+    }
+    .del{
+      border:1px solid var(--line);
+      background:#fff;border-radius:10px;
+      cursor:pointer;
+      padding:6px 10px;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:#111;color:#fff;
+      padding:10px 12px;border-radius:999px;
+      display:none;z-index:90;
+      max-width:92vw;font-size:13px;
+    }
+    .toast.show{display:block}
+
+    /* ===== Lightbox simples ===== */
+    .lightbox{
+      position:fixed;inset:0;display:none;z-index:95;
+      background:rgba(0,0,0,.75);
+      padding:20px;
+    }
+    .lightbox.open{display:flex;align-items:center;justify-content:center}
+    .lbBox{
+      width:min(900px, 100%);
+      background:#111;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      position:relative;
+    }
+    .lbImg{
+      width:100%;
+      height:min(70vh, 650px);
+      object-fit:contain;
+      background:#111;
+      display:block;
+    }
+    .lbClose{
+      position:absolute;right:10px;top:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:900;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="top">
+      <div class="brand">IRONWAY</div>
+      <div class="right">
+        <div class="search" title="Buscar">
+          <span style="color:#999">⌕</span>
+          <input id="q" placeholder="Buscar produto..." />
+        </div>
+        <button class="btn" id="btnCart">
+          Carrinho <span class="badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+  </header>
+
+  <main class="wrap">
+    <div class="gridHead">
+      <div>
+        <div style="font-weight:900;font-size:16px" id="titleCat">Geral</div>
+        <div class="hint" id="subtitle"></div>
+      </div>
+      <div class="small" id="count"></div>
+    </div>
+
+    <section class="products" id="grid"></section>
+  </main>
+
+  <div class="overlay" id="ov">
+    <div class="drawer" role="dialog" aria-modal="true">
+      <div class="dhd">
+        <div style="font-weight:900">Carrinho</div>
+        <button class="btn" id="closeCart">Fechar</button>
+      </div>
+
+      <div class="dbd" id="cartList"></div>
+
+      <div class="dft">
+        <div style="display:flex;justify-content:space-between;gap:10px">
+          <span class="small">Subtotal</span>
+          <span style="font-weight:900" id="subtotal">R$ 0,00</span>
+        </div>
+        <button class="btn primary" id="checkout">Finalizar no WhatsApp</button>
+        <button class="btn" id="clear">Limpar carrinho</button>
+        <div class="small"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lb">
+    <div class="lbBox">
+      <button class="lbClose" id="lbClose">✕</button>
+      <img class="lbImg" id="lbImg" alt="Imagem ampliada">
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  
+    const WHATSAPP_NUMBER = "5593992409043"; 
+    const STORE_NAME = "IRONWAY";
+
+    const PRODUCTS = [
+
+      {
+        id: "g1",
+        name: "Conjunto Nike",
+        price: 94.99,
+        category: "Roupas",
+        images: [
+          "conjunto nike preto.png",
+          "conjunto nike branco.png",
+          "conjunto nike cinza.png",
+          "conjunto nike azul.png",
+          "conjunto nike azul mar.png"
+        ],
+        colors: ["Preto", "Branco", "Cinza", "Azul","Azul Marinho"],
+        sizes: ["P","M","G","GG",]
+      },
+        {
+        id: "g2",
+        name: "Over Size Los Angeles",
+        price: 99.99,
+        category: "Roupas",
+        images: [
+          "overlos.png",
+        ],
+        colors: ["Azul escuro"],
+        sizes: ["P","M","G","GG",]
+      },
+     
+      {
+        id: "g3",
+        name: "Short Jordan",
+        price: 59.99,
+        category: "Roupas",
+        images: [
+          "short jordan 2.png",
+          "short jordan 1.png",
+        ],
+        colors: ["Branco", "Preto", "Cinza","Azul","Bege",],
+        sizes: ["P","M","G","GG",]
+      },
+      {
+        id: "g4",
+        name: "Short Praiano",
+        price: 59.99,
+        category: "Roupas",
+        images: [
+          "short praiano1.png",
+          "short praiano2.png",
+          "short praiano3.png",
+          "short praiano4.png",
+          "short praiano5.png"
+        ],
+        colors: ["Preto", "Rosa", "Marrom","Laranja","Amarelo",],
+        sizes: ["P","M","G","GG",]
+      },
+      {
+        id: "g5",
+        name: "Over Size Básica",
+        price: 99.99,
+        category: "Roupas",
+        images: [
+          "overbas.png",
+        ],
+        colors: ["Preto","Azul"],
+        sizes: ["P","M","G","GG",]
+      },
+         {
+        id: "g6",
+        name: "Over Size Nike",
+        price: 99.99,
+        category: "Roupas",
+        images: [
+          "overnike.png",
+        ],
+        colors: ["branca","Preto"],
+        sizes: ["P","M","G","GG",]
+      },
+       {
+        id: "g7",
+        name: "Calça Jogger",
+        price: 99.99,
+        category: "Roupas",
+        images: [
+          "calça jogger.png",
+          "calça jogger1.png",
+          "calça jogger2.png",
+        ],
+        colors: ["Preto", "Branco", "Jeans","Bege","Militar","Caramelo",],
+        sizes: ["P","M","G","GG",]
+      },
+     
+        {
+        id: "g8",
+        name: "Over Size Boston",
+        price: 99.99,
+        category: "Roupas",
+        images: [
+          "overbos.png",
+        ],
+        colors: ["Azul escuro","Preto"],
+        sizes: ["P","M","G","GG",]
+      },
+    ];
+
+   
+    const $ = (id) => document.getElementById(id);
+    const CART_KEY = "ironway_cart_v2";
+    let activeCategory = "Geral";
+    let queryText = "";
+
+    function money(v){
+      const n = Number(v || 0);
+      return n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+    }
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove("show"), 2000);
+    }
+
+    function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
+    function setCart(items){ localStorage.setItem(CART_KEY, JSON.stringify(items)); }
+
+    function buildCategories(){
+      const set = new Set(["Geral"]);
+      PRODUCTS.forEach(p => set.add(p.category || "Geral"));
+      return Array.from(set);
+    }
+
+    function renderNav(){
+      const nav = $("nav");
+      nav.innerHTML = "";
+      const cats = buildCategories();
+
+      cats.forEach(cat => {
+        const b = document.createElement("button");
+        b.className = "tab" + (cat === activeCategory ? " active" : "");
+        b.textContent = cat;
+        b.onclick = () => {
+          activeCategory = cat;
+          $("titleCat").textContent = cat;
+          renderNav();
+          renderGrid();
+        };
+        nav.appendChild(b);
+      });
+    }
+
+    function filterProducts(){
+      return PRODUCTS.filter(p => {
+        const cat = p.category || "Geral";
+        const okCat = (activeCategory === "Geral") ? true : (cat === activeCategory);
+        if(!okCat) return false;
+
+        if(!queryText) return true;
+        const hay = `${p.name||""} ${cat}`.toLowerCase();
+        return hay.includes(queryText.toLowerCase());
+      });
+    }
+
+    function renderGrid(){
+      const list = filterProducts();
+      $("count").textContent = `${list.length} produto(s)`;
+      const grid = $("grid");
+      grid.innerHTML = "";
+
+      if(list.length === 0){
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;border:1px solid var(--line);border-radius:14px;padding:16px">
+            <div style="font-weight:900">Nada encontrado</div>
+            <div class="hint">Tente outra categoria ou limpe a busca.</div>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(p => grid.appendChild(productCard(p)));
+    }
+
+    function productCard(p){
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const colors = Array.isArray(p.colors) ? p.colors : [];
+      const sizes  = Array.isArray(p.sizes) ? p.sizes : [];
+      const images = Array.isArray(p.images) && p.images.length ? p.images : [""];
+
+      card.innerHTML = `
+        <div class="thumb">
+          <div class="tag">${p.category || "Geral"}</div>
+
+          <div class="navArrows">
+            <button class="arr" data-prev aria-label="Anterior">‹</button>
+            <button class="arr" data-next aria-label="Próximo">›</button>
+          </div>
+
+          <div class="rail" data-rail></div>
+          <div class="dots" data-dots></div>
+        </div>
+
+        <div class="body">
+          <div class="name">${p.name || "Produto"}</div>
+
+          <div class="meta" data-colors></div>
+          <div class="meta" data-sizes></div>
+
+          <div class="row">
+            <div>
+              <div class="price">${money(p.price)}</div>
+              <div class="small"></div>
+            </div>
+            <button class="add">Adicionar</button>
+          </div>
+        </div>
+      `;
+
+      const rail = card.querySelector("[data-rail]");
+      const dots = card.querySelector("[data-dots]");
+
+      images.forEach((url, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.innerHTML = `<img src="${url}" alt="${p.name || "Produto"}" loading="lazy">`;
+        slide.onclick = () => openLightbox(url);
+        rail.appendChild(slide);
+
+        const dot = document.createElement("div");
+        dot.className = "dot" + (idx === 0 ? " active" : "");
+        dots.appendChild(dot);
+      });
+
+      function setActiveDot(index){
+        [...dots.children].forEach((d,i)=> d.classList.toggle("active", i===index));
+      }
+
+      rail.addEventListener("scroll", () => {
+        const w = rail.clientWidth || 1;
+        const idx = Math.round(rail.scrollLeft / w);
+        setActiveDot(Math.max(0, Math.min(images.length-1, idx)));
+      }, { passive:true });
+
+      const btnPrev = card.querySelector("[data-prev]");
+      const btnNext = card.querySelector("[data-next]");
+
+      function scrollToIndex(nextIndex){
+        const w = rail.clientWidth || 1;
+        rail.scrollTo({ left: nextIndex * w, behavior: "smooth" });
+        setActiveDot(nextIndex);
+      }
+      function currentIndex(){
+        const w = rail.clientWidth || 1;
+        return Math.round(rail.scrollLeft / w);
+      }
+      btnPrev.onclick = () => {
+        const idx = currentIndex();
+        scrollToIndex(Math.max(0, idx - 1));
+      };
+      btnNext.onclick = () => {
+        const idx = currentIndex();
+        scrollToIndex(Math.min(images.length - 1, idx + 1));
+      };
+
+      const colorsBox = card.querySelector("[data-colors]");
+      if(colors.length){
+        colors.forEach((c, i) => {
+          const chip = document.createElement("button");
+          chip.className = "chip" + (i===0 ? " active" : "");
+          chip.textContent = c;
+          chip.onclick = () => {
+            [...colorsBox.children].forEach(x => x.classList.remove("active"));
+            chip.classList.add("active");
+          };
+          colorsBox.appendChild(chip);
+        });
+      } else {
+        const chip = document.createElement("span");
+        chip.className = "chip active";
+        chip.textContent = "Cor: padrão";
+        chip.style.cursor = "default";
+        colorsBox.appendChild(chip);
+      }
+
+      const sizesBox = card.querySelector("[data-sizes]");
+      if(sizes.length){
+        sizes.forEach((s, i) => {
+          const chip = document.createElement("button");
+          chip.className = "chip" + (i===0 ? " active" : "");
+          chip.textContent = s;
+          chip.onclick = () => {
+            [...sizesBox.children].forEach(x => x.classList.remove("active"));
+            chip.classList.add("active");
+          };
+          sizesBox.appendChild(chip);
+        });
+      } else {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = "Sem numeração";
+        chip.style.cursor = "default";
+        sizesBox.appendChild(chip);
+      }
+
+      card.querySelector(".add").onclick = () => {
+        const colorEl = colorsBox.querySelector(".chip.active");
+        const sizeEl  = sizesBox.querySelector(".chip.active");
+
+        const chosenColor = colorEl ? colorEl.textContent : "padrão";
+        const chosenSize  = sizes.length ? (sizeEl ? sizeEl.textContent : "") : "";
+
+        addToCart(p, chosenColor, chosenSize, 1);
+      };
+
+      return card;
+    }
+
+    function itemKey(id, color, size){
+      return `${id}::${(color||"").trim()}::${(size||"").trim()}`;
+    }
+
+    function addToCart(product, color, size, qty){
+      const cart = getCart();
+      const key = itemKey(product.id, color, size);
+      const it = cart.find(x => x.key === key);
+
+      if(it){
+        it.qty += qty;
+      } else {
+        cart.push({
+          key,
+          id: product.id,
+          name: product.name,
+          price: Number(product.price||0),
+          images: Array.isArray(product.images) ? product.images : [],
+          category: product.category || "Geral",
+          color: color || "padrão",
+          size: size || "",
+          qty: qty
+        });
+      }
+      setCart(cart);
+      renderCartBadge();
+      toast("Adicionado ao carrinho");
+    }
+
+    function renderCartBadge(){
+      const cart = getCart();
+      const count = cart.reduce((a,i)=> a + Number(i.qty||0), 0);
+      $("cartCount").textContent = String(count);
+    }
+
+    function openCart(){
+      $("ov").classList.add("open");
+      renderCart();
+    }
+    function closeCart(){ $("ov").classList.remove("open"); }
+
+    function renderCart(){
+      const cart = getCart();
+      const root = $("cartList");
+      root.innerHTML = "";
+
+      if(cart.length === 0){
+        root.innerHTML = `
+          <div style="border:1px solid var(--line);border-radius:14px;padding:14px">
+            <div style="font-weight:900">Carrinho vazio</div>
+            <div class="hint">Adicione produtos e finalize no WhatsApp.</div>
+          </div>
+        `;
+        $("subtotal").textContent = money(0);
+        return;
+      }
+
+      let sub = 0;
+
+      cart.forEach((it, idx) => {
+        sub += it.price * it.qty;
+        const thumb = it.images?.[0] || "";
+
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <img src="${thumb}" alt="">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <div style="font-weight:900">${it.name}</div>
+                <div class="small">Cor: <b>${it.color}</b>${it.size ? ` · Numeração: <b>${it.size}</b>` : ""}</div>
+              </div>
+              <button class="del" title="Remover">✕</button>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <div style="font-weight:900">${money(it.price)}</div>
+              <div class="qty">
+                <button class="qbtn" data-minus>−</button>
+                <div style="min-width:22px;text-align:center;font-weight:900">${it.qty}</div>
+                <button class="qbtn" data-plus>+</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        el.querySelector("[data-minus]").onclick = () => changeQty(idx, -1);
+        el.querySelector("[data-plus]").onclick  = () => changeQty(idx, +1);
+        el.querySelector(".del").onclick = () => removeItem(idx);
+
+        root.appendChild(el);
+      });
+
+      $("subtotal").textContent = money(sub);
+    }
+
+    function changeQty(idx, delta){
+      const cart = getCart();
+      const it = cart[idx];
+      if(!it) return;
+      it.qty += delta;
+      if(it.qty <= 0) cart.splice(idx, 1);
+      setCart(cart);
+      renderCartBadge();
+      renderCart();
+    }
+
+    function removeItem(idx){
+      const cart = getCart();
+      cart.splice(idx, 1);
+      setCart(cart);
+      renderCartBadge();
+      renderCart();
+    }
+
+    function buildWhatsAppMessage(){
+      const cart = getCart();
+      let total = 0;
+
+      const lines = [];
+      lines.push(` *Pedido ${STORE_NAME}*`);
+      lines.push("");
+
+      cart.forEach((it, i) => {
+        const itemTotal = it.price * it.qty;
+        total += itemTotal;
+
+        lines.push(`*${i+1}.* ${it.name}`);
+        lines.push(`• Cor: ${it.color}`);
+        if(it.size) lines.push(`• Numeração: ${it.size}`);
+        lines.push(`• Quantidade: ${it.qty}`);
+        lines.push(`• Preço: ${money(it.price)} (Item: ${money(itemTotal)})`);
+
+
+        lines.push("");
+      });
+
+      lines.push(`*Total:* ${money(total)}`);
+      lines.push("");
+      lines.push("Nome:");
+      lines.push("Endereço:");
+      lines.push("Forma de pagamento:");
+
+      return lines.join("\n");
+    }
+
+    function checkout(){
+      const cart = getCart();
+      if(cart.length === 0){
+        toast("Carrinho vazio");
+        return;
+      }
+      const msg = buildWhatsAppMessage();
+      const url = `https://wa.me/` + WHATSAPP_NUMBER + `?text=` + encodeURIComponent(msg);
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    function openLightbox(url){
+      $("lbImg").src = url;
+      $("lb").classList.add("open");
+    }
+    function closeLightbox(){
+      $("lb").classList.remove("open");
+      $("lbImg").src = "";
+    }
+
+    $("btnCart").onclick = openCart;
+    $("closeCart").onclick = closeCart;
+    $("ov").onclick = (e) => { if(e.target === $("ov")) closeCart(); };
+
+    $("clear").onclick = () => {
+      setCart([]);
+      renderCartBadge();
+      renderCart();
+      toast("Carrinho limpo");
+    };
+    $("checkout").onclick = checkout;
+
+    $("q").addEventListener("input", (e) => {
+      queryText = e.target.value || "";
+      renderGrid();
+    });
+
+    $("lbClose").onclick = closeLightbox;
+    $("lb").onclick = (e) => { if(e.target === $("lb")) closeLightbox(); };
+
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "Escape"){ closeCart(); closeLightbox(); }
+    });
+
+    renderNav();
+    renderGrid();
+    renderCartBadge();
+  </script>
+</body>
+</html>
