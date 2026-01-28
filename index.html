@@ -349,7 +349,7 @@
           <span class="small">Subtotal</span>
           <span style="font-weight:900" id="subtotal">R$ 0,00</span>
         </div>
-        <button class="btn primary" id="checkout">Finalizar no Instagram</button>
+        <button class="btn primary" id="checkout">Finalizar no WhatsApp</button>
         <button class="btn" id="clear">Limpar carrinho</button>
         <div class="small"></div>
       </div>
@@ -367,8 +367,8 @@
 
   <script>
   
-  const INSTAGRAM_USER = "ironwayitb";
-  const STORE_NAME = "IRONWAY";
+    const WHATSAPP_NUMBER = "5593992409043"; 
+    const STORE_NAME = "IRONWAY";
 
     const PRODUCTS = [
 
@@ -815,7 +815,7 @@
       renderCart();
     }
 
-    function buildOrderMessage(){
+    function buildWhatsAppMessage(){
       const cart = getCart();
       let total = 0;
 
@@ -845,34 +845,17 @@
 
       return lines.join("\n");
     }
-function checkout(){
-  const cart = getCart();
-  if(cart.length === 0){
-    toast("Carrinho vazio");
-    return;
-  }
 
-  const msg = buildOrderMessage();
-
-  const text = encodeURIComponent(msg);
-
-
-  const deepLink = `instagram://direct/new?username=${INSTAGRAM_USER}`;
-
-
-  const webLink = `https://www.instagram.com/direct/new/?username=${INSTAGRAM_USER}&text=${text}`;
-
- 
-  const start = Date.now();
-  window.location.href = deepLink;
-
-  setTimeout(() => {
-   
-    if(Date.now() - start < 1400){
-      window.open(webLink, "_blank", "noopener,noreferrer");
+    function checkout(){
+      const cart = getCart();
+      if(cart.length === 0){
+        toast("Carrinho vazio");
+        return;
+      }
+      const msg = buildWhatsAppMessage();
+      const url = `https://wa.me/` + WHATSAPP_NUMBER + `?text=` + encodeURIComponent(msg);
+      window.open(url, "_blank", "noopener,noreferrer");
     }
-  }, 800);
-}
 
     function openLightbox(url){
       $("lbImg").src = url;
